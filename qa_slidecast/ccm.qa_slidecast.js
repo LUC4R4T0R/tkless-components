@@ -91,6 +91,9 @@
             if ( this.onchange && this.onchange( { name: event.name, instance: this, before: true } ) ) return;
             let slide;
             switch ( event.name ) {
+              case 'pdfgoto':
+                slide = this.ignore.slides.find(slide => slide.content === event.page);
+                break;
               case 'jump':
               case 'goto':  slide = event.page;                break;
               case 'first': slide = 1;                         break;

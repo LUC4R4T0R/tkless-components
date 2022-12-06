@@ -135,6 +135,74 @@ input {
   background-color: #0BA1E2;
 }
 
+#annotation-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  font-family: sans-serif;
+}
+
+#annotation-layer *{
+  margin: 0;
+  padding: 0;
+}
+
+#annotation-layer img[src='annotation-noicon.svg']{
+  opacity: 0;
+}
+
+#annotation-layer .linkAnnotation>a{
+  width: 100%;
+  height: 100%;
+}
+
+#annotation-layer section {
+  position: absolute;
+  box-sizing: border-box;
+  cursor: pointer;
+  transform-origin: 0 0;
+}
+
+#annotation-layer .popupContent {
+  border-top: 1px solid rgba(51, 51, 51, 1);
+  border-top-color: rgb(51, 51, 51);
+  border-top-style: solid;
+  border-top-width: 1px;
+  margin-top: 3px;
+  padding-top: 3px;
+}
+
+#annotation-layer .popup {
+  position: absolute;
+  max-width: 300px;
+  background-color: rgba(255, 255, 153, 1);
+  box-shadow: 0 3px 7px rgba(136, 136, 136, 1);
+  border-radius: 3px;
+  padding: 9px;
+  margin-left: 7px;
+  cursor: pointer;
+  font: message-box;
+  white-space: normal;
+  word-wrap: break-word;
+  pointer-events: auto;
+}
+
+#annotation-layer .popup > * {
+  font-size: 1rem;
+  color: black;
+}
+
+#annotation-layer .popup h1 {
+  color: black;
+  display: inline-block;
+}
+
+#annotation-layer .popupDate {
+  display: none
+}
+
 /* Dark Mode */
 
 #element.dark_mode {

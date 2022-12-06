@@ -23,6 +23,7 @@ export function main( instance, events, page_nr, pages ) {
       <div id="page">
         <canvas></canvas>
         <div id="text-layer"></div>
+        <div id="annotation-layer"></div>
       </div>
       <div>
         <nav id="controls" ?data-hidden=${ pages <= 1 }>
