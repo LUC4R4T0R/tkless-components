@@ -144,6 +144,7 @@ input {
   right: 0;
   bottom: 0;
   font-family: sans-serif;
+  pointer-events: none;
 }
 
 #annotation-layer *{
@@ -165,6 +166,7 @@ input {
   box-sizing: border-box;
   cursor: pointer;
   transform-origin: 0 0;
+  pointer-events: auto;
 }
 
 #annotation-layer .popupContent {
