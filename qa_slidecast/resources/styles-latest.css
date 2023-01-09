@@ -36,14 +36,26 @@ header > * {
   padding-left: 0.5em;
 }
 
-#control {
+.bar{
   color: var( --icons );
-  margin: 0 0.5em 0.5em;
+  margin: 0 1em 0.5em;
   border-radius: 5px;
   border: 1px solid var( --border );
+}
+
+#control {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+#recorder{
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 
 audio {
@@ -51,23 +63,38 @@ audio {
   margin: 0.2em;
 }
 
-#control > div {
-  padding: 0.5em 1em;
+.bar .button {
+  padding: 0 1em;
+  position: relative;
+}
+
+#control #audio-player{
+  flex-grow: 1;
+  border-right: 1px solid var( --border );
 }
 
 #description,
 #comments {
   border: 1px solid var( --border );
-  margin: 0.5em;
+  margin: 0.5em 1em;
 }
 
 #description article {
   padding: 0.5em;
 }
 
+#audio-recorder{
+  flex-grow: 1;
+}
+
+#rec-del{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 i {
   font-size: 30px;
-  line-height: 30px;
   cursor: pointer;
 }
 

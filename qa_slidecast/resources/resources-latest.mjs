@@ -156,11 +156,40 @@ export const local = {
 //"onready": event => console.log( 'onready', event ),
 //"onstart": event => console.log( 'onstart', event ),
   "pdf_viewer": [ "ccm.instance", "./../pdf_viewer/ccm.pdf_viewer.js", [ "ccm.load", "./../pdf_viewer/resources/resources-latest.mjs#local" ] ],
+  "audio_player": ["ccm.component", "./../audio_player/ccm.audio_player.js", {
+    "css": [ "ccm.load",
+      "./../audio_player/resources/styles-latest.css",
+      "./../libs/bootstrap-5/css/bootstrap-icons.css",
+      { "url": "./../libs/bootstrap-5/css/bootstrap-fonts.css", "context": "head" },
+    ],
+    "dark": "auto",
+    "helper.1": "./../libs/ccm/helper.mjs",
+    "html.1": "./../audio_player/resources/templates-latest.mjs",
+    "lang": [ "ccm.start", "https://ccmjs.github.io/akless-components/lang/ccm.lang.js", {
+      "translations": { "de": text_de, "en": text_en }
+    }]
+  }],
   "routing": [ "ccm.instance", "https://ccmjs.github.io/akless-components/routing/ccm.routing.js" ],
   "text": text_de,
   "user": [ "ccm.start", "https://ccmjs.github.io/akless-components/user/ccm.user.js" ],
   "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/ccm.youtube.js" ]
 };
+
+export const local_editor = JSON.parse(JSON.stringify(local));
+local_editor.audio_recorder = ["ccm.component", "./../audio_recorder/ccm.audio_recorder.js", {
+  "css": [ "ccm.load",
+    "./../audio_recorder/resources/styles-latest.css",
+    "./../libs/bootstrap-5/css/bootstrap-icons.css",
+    { "url": "./../libs/bootstrap-5/css/bootstrap-fonts.css", "context": "head" },
+  ],
+  "dark": "auto",
+  "helper.1": "./../libs/ccm/helper.mjs",
+  "html.1": "./../audio_recorder/resources/templates-latest.mjs",
+  "lang": [ "ccm.start", "https://ccmjs.github.io/akless-components/lang/ccm.lang.js", {
+    "translations": { "de": text_de, "en": text_en }
+  }]
+}];
+local_editor.edit_mode = true;
 
 /**
  * demo configuration (absolute paths)

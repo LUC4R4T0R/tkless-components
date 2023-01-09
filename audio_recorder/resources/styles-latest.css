@@ -1,0 +1,157 @@
+/**
+ * @overview default layout of ccmjs-based web component for audio recorder
+@author Luca Ringhausen <luca.ringhausen@h-brs.de> 2022
+ * @license The MIT License (MIT)
+ * @version latest (v1)
+ */
+
+#element {
+  --bg: white;
+  --color: black;
+  --border: lightgray;
+  --disabled: lightgray;
+  --level-bg: lightgray;
+  --icons: var( --color );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var( --bg );
+  color: var( --color );
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+#bar{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+#bar>div{
+  box-sizing: border-box;
+}
+
+#bar>#recording-time{
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+#bar i.bi{
+  font-size: 30px;
+  position: relative;
+  display: block;
+}
+
+.button{
+  padding: 0 1em;
+}
+
+.button:not([disabled]){
+  cursor: pointer;
+}
+
+.button[disabled]{
+  color: var(--disabled);
+  cursor: not-allowed;
+}
+
+
+@keyframes blinking {
+  from {opacity: 1}
+  to {opacity: 0.4}
+}
+
+.button.recording{
+  color: #dc3545;
+}
+
+.button.recording, .button.paused{
+  animation-name: blinking;
+  animation-direction: alternate;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(1,0,0,1);
+}
+
+.error{
+  font-size: 1rem;
+  margin: 0.5rem;
+}
+
+.microphone-error>.bi{
+  cursor: pointer;
+  display: inline;
+}
+
+#rec-del{
+  display: flex;
+  margin-left: auto;
+}
+
+#audio-level-meter{
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+#audio-level-meter>.meter{
+  flex-grow: 1;
+  background-color: var(--level-bg);
+  border-radius: 0.25rem;
+  height: 0.5rem;
+  display: flex;
+  flex-direction: row;
+}
+
+#audio-level-meter>.meter>.level{
+  position: relative;
+  flex-grow: 1;
+}
+
+#audio-level-meter>.meter>.level>.inner {
+  width: 100%;
+  height: 100%;
+  content: '';
+  position: absolute;
+  border-radius: 0.25rem;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  background-repeat: no-repeat;
+  background-image:linear-gradient(to right, #198754 0%, #ffc107 95%, #dc3545 98%, #dc3545 100%);
+  background-size: 100% 100%;
+  clip-path: inset(100% 0 0 0); /* switch off leds via clipping */
+  -webkit-clip-path: inset(100% 0 0 0); /* Safari */
+}
+
+/* Dark Mode */
+
+#element.dark_mode {
+  --bg: black;
+  --color: white;
+  --border: #515151;
+  --disabled: #212529;
+  --icons: #b1b1b1;
+  --level-bg: #515151;
+}
+
+#element.dark_mode audio {
+  opacity: 0.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  #element.dark_auto {
+    --bg: black;
+    --color: white;
+    --border: #515151;
+    --disabled: #212529;
+    --icons: #b1b1b1;
+    --level-bg: #515151;
+  }
+
+  #element.dark_auto audio {
+    opacity: 0.4;
+  }
+}
+

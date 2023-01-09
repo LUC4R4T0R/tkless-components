@@ -25,13 +25,29 @@ export function main( instance, events ) {
     <main>
       <header></header>
       <section id="viewer"></section>
-      <section id="control" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
-        <div title="${ instance.text.description || '' }" data-lang="description-title" ?data-hidden=${ !instance.description }>
+      <audio src="${ slide_data.audio || '' }" controls ?data-invisible=${ !slide_data.audio }></audio>
+      <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
+        <div id="audio-player">
+
+        </div>
+        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description }>
           <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
         </div>
-        <audio src="${ slide_data.audio || '' }" controls ?data-invisible=${ !slide_data.audio }></audio>
-        <div title="${ instance.text.comments || '' }" data-lang="comments-title" ?data-hidden=${ !instance.comment }>
+        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment }>
           <i class="bi bi-chat-square-text${ instance.open === 'comments' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ slide_data.commentary === false } @click=${ events.onComments }></i>
+        </div>
+      </section>
+      <section id="recorder" class="bar" ?data-hidden=${ !instance.edit_mode }>
+        <div id="audio-recorder"></div>
+        <div id="rec-del">
+          <div id="revert-recording" class="button" @click=${events.onRevertRecording} role="button"
+               ?hidden="${false}" title="Revert Recording">
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </div>
+          <div id="delete-recording" class="button" @click=${events.onDeleteRecording} role="button"
+               ?hidden="${false}" title="Delete Recording" ?data-hidden=${ !slide_data.audio }>
+            <i class="bi bi-trash"></i>
+          </div>
         </div>
       </section>
       <section id="description" ?data-hidden=${ !instance.description || !slide_data.description || instance.open !== 'description' && instance.open !== 'both' }></section>

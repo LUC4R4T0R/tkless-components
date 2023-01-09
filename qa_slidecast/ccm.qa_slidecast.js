@@ -42,11 +42,14 @@
 //    "onstart": instance => { console.log( 'start', instance.slide_nr ) },
       "open": "both",
       "pdf_viewer": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/pdf_viewer/versions/ccm.pdf_viewer-8.1.0.min.js" ],
+      "audio_player": [ "ccm.component", "https://ccmjs.github.io/tkless-components/audio_player/versions/ccm.audio_player-1.0.0.min.js" ],
 //    "routing": [ "ccm.instance", "https://ccmjs.github.io/akless-components/routing/versions/ccm.routing-3.0.0.min.js" ],
       "slide_nr": 1,
       "ignore": {},
       "text": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/resources-latest.min.mjs#text_en" ],
-//    "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/versions/ccm.youtube-2.1.1.js" ]
+//    "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/versions/ccm.youtube-2.1.1.js" ],
+      "edit_mode": false,
+//    "audio_recorder": ["ccm.component", "https://ccmjs.github.io/tkless-components/audio_recorder/versions/ccm.audio_recorder-1.0.0.js"]
     },
     Instance: function () {
 
@@ -156,6 +159,12 @@
         if ( header ) {
           header && this.lang && !this.lang.getContext() && $.append( header, this.lang.root );
           header && this.user && $.append( header, this.user.root );
+        }
+
+        //initialize editMode
+        if(this.edit_mode){
+          this.audioRecorderComponent = await this.audio_recorder.start( { dark: this.dark } );
+          if(this.audio_recorder) $.setContent( this.element.querySelector( '#audio-recorder' ), this.audioRecorderComponent.root );
         }
 
         // trigger 'onstart' callback
@@ -270,6 +279,11 @@
         }
         slide_data._description && $.setContent( description_element, slide_data._description );
 
+        if(this.audio_player && slide_data.audio){
+          const audioPlayerComponent = await this.audio_player.start( { audio: slide_data.audio, dark: this.dark } );
+          $.setContent( this.element.querySelector( '#audio-player' ), audioPlayerComponent.root);
+        }
+
         // render comments
         if ( this.comment && slide_data.commentary !== false ) {
           if ( !slide_data.comments )
@@ -325,6 +339,16 @@
             case 'both': this.open = 'description'; break;
           }
           render( true );
+        },
+
+        onRevertRecording: () => {
+          this.audioRecorderComponent.deleteRecording();
+        },
+
+        onDeleteRecording: () => {
+          this.ignore.slides[ this.slide_nr - 1 ].audio = null;
+          render(true);
+          events.onRevertRecording();
         }
 
       };
