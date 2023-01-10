@@ -18,34 +18,28 @@ export function main( instance, events ) {
         return html`
         <div id="bar">
           <div id="play" class="button" @click=${events.onPlay} ?hidden=${instance.playing} ?disabled="${!instance.isAudioReady()}" role="button">
-                <i class="bi bi-play" ></i>
-            </div>
-            <div id="pause" class="button" @click=${events.onPause} ?hidden=${!instance.playing} ?disabled="${!instance.isAudioReady()}" role="button">
-                <i class="bi bi-pause"></i>
-            </div>
-            <div id="progress" >
-                <input type="range" class="form-range" min="0" step="0.01" @change="${events.onChangeProgress}" ?disabled="${!instance.isAudioReady()}"  >
-            </div>
-            <div id="time" >
-                <span id="current"></span>
-                <span>&nbsp;/&nbsp;</span>
-                <span id="max"></span>
-            </div>
-            <div id="mute" class="button" @click=${events.onMute} ?hidden=${instance.playbackMuted} role="button">
-                <i class="bi bi-volume-up"></i>
-            </div>
-            <div id="unmute" class="button" @click=${events.onUnMute} ?hidden=${!instance.playbackMuted} role="button">
-                <i class="bi bi-volume-mute"></i>
-            </div>
-            <div id="volume" >
-                <input type="range" class="form-range" min="0" max="1" step="0.01" @change="${events.onChangeVolume}" ">
-            </div>
-            <div id="autoplay-on" class="button" @click=${events.onDisableAutoPlay} ?hidden=${!instance.autoPlay} title="Autoplay" role="button">
-                <i class="bi bi-collection-play" ></i>
-            </div>
-            <div id="autoplay-off" class="button" @click=${events.onEnableAutoPlay}  ?hidden=${instance.autoPlay} title="Manual Playback" role="button">
-                <i class="bi bi-play-btn" ></i>
-            </div>
+            <i class="bi bi-play" ></i>
+          </div>
+          <div id="pause" class="button" @click=${events.onPause} ?hidden=${!instance.playing} ?disabled="${!instance.isAudioReady()}" role="button">
+            <i class="bi bi-pause"></i>
+          </div>
+          <div id="time" >
+            <span id="current"></span>
+            <span>&nbsp;/&nbsp;</span>
+            <span id="max"></span>
+          </div>
+          <div id="progress" >
+            <input type="range" class="form-range" min="0" step="0.01" @change="${events.onChangeProgress}" ?disabled="${!instance.isAudioReady()}"  >
+          </div>
+          <div id="mute" class="button" @click=${events.onMute} ?hidden=${instance.playbackMuted} role="button">
+            <i class="bi bi-volume-up"></i>
+          </div>
+          <div id="unmute" class="button" @click=${events.onUnMute} ?hidden=${!instance.playbackMuted} role="button">
+            <i class="bi bi-volume-mute"></i>
+          </div>
+          <div id="volume" >
+            <input type="range" class="form-range" min="0" max="1" step="0.01" @change="${events.onChangeVolume}" ">
+          </div>
         </div>
       `;
     }else if(!instance.audioFile){

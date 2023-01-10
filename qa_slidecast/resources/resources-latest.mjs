@@ -67,7 +67,8 @@ export const slides_de = [
   {
     "audio": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/de/video.m4a",
     "content": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/video.mp4",
-    "description": "Zwischen zwei Folien kann auch ein kleines Video platziert werden."
+    "description": "Zwischen zwei Folien kann auch ein kleines Video platziert werden.",
+    "wait": true
   },
   {
     "audio": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/de/app.m4a",
@@ -109,7 +110,8 @@ export const slides_en = [
   {
     "audio": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/en/video.m4a",
     "content": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/video.mp4",
-    "description": "A little video can be placed instead of a slide."
+    "description": "A little video can be placed instead of a slide.",
+    "wait": true
   },
   {
     "audio": "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/demo/en/app.m4a",
@@ -156,7 +158,7 @@ export const local = {
 //"onready": event => console.log( 'onready', event ),
 //"onstart": event => console.log( 'onstart', event ),
   "pdf_viewer": [ "ccm.instance", "./../pdf_viewer/ccm.pdf_viewer.js", [ "ccm.load", "./../pdf_viewer/resources/resources-latest.mjs#local" ] ],
-  "audio_player": ["ccm.component", "./../audio_player/ccm.audio_player.js", {
+  "audio_player": ["ccm.instance", "./../audio_player/ccm.audio_player.js", {
     "css": [ "ccm.load",
       "./../audio_player/resources/styles-latest.css",
       "./../libs/bootstrap-5/css/bootstrap-icons.css",
@@ -176,7 +178,7 @@ export const local = {
 };
 
 export const local_editor = JSON.parse(JSON.stringify(local));
-local_editor.audio_recorder = ["ccm.component", "./../audio_recorder/ccm.audio_recorder.js", {
+local_editor.audio_recorder = ["ccm.instance", "./../audio_recorder/ccm.audio_recorder.js", {
   "css": [ "ccm.load",
     "./../audio_recorder/resources/styles-latest.css",
     "./../libs/bootstrap-5/css/bootstrap-icons.css",
@@ -189,6 +191,7 @@ local_editor.audio_recorder = ["ccm.component", "./../audio_recorder/ccm.audio_r
     "translations": { "de": text_de, "en": text_en }
   }]
 }];
+local_editor.auto_play = false;
 local_editor.edit_mode = true;
 
 /**

@@ -42,14 +42,15 @@
 //    "onstart": instance => { console.log( 'start', instance.slide_nr ) },
       "open": "both",
       "pdf_viewer": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/pdf_viewer/versions/ccm.pdf_viewer-8.1.0.min.js" ],
-      "audio_player": [ "ccm.component", "https://ccmjs.github.io/tkless-components/audio_player/versions/ccm.audio_player-1.0.0.min.js" ],
+      "audio_player": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/audio_player/versions/ccm.audio_player-1.0.0.min.js" ],
 //    "routing": [ "ccm.instance", "https://ccmjs.github.io/akless-components/routing/versions/ccm.routing-3.0.0.min.js" ],
       "slide_nr": 1,
       "ignore": {},
       "text": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/resources-latest.min.mjs#text_en" ],
 //    "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/versions/ccm.youtube-2.1.1.js" ],
       "edit_mode": false,
-//    "audio_recorder": ["ccm.component", "https://ccmjs.github.io/tkless-components/audio_recorder/versions/ccm.audio_recorder-1.0.0.js"]
+//    "audio_recorder": ["ccm.instance", "https://ccmjs.github.io/tkless-components/audio_recorder/versions/ccm.audio_recorder-1.0.0.js"]
+      "auto_play": true
     },
     Instance: function () {
 
@@ -105,10 +106,11 @@
               case 'next':  slide = this.slide_nr + 1;         break;
               case 'last':  slide = this.ignore.slides.length; break;
             }
+            this.audio_recorder.resetRecorder();
             if ( !( slide >= 1 && slide <= this.ignore.slides.length && slide !== this.slide_nr ) ) return;
             this.slide_nr = slide;
             this.routing && this.routing.set( 'slide-' + slide );  // update route
-            render();
+            render(false, event.data?.autoPlay);
           }
           else {
             updateControls();
@@ -116,6 +118,27 @@
           }
           return true;
         };
+
+        this.audio_player.onplaybackfinished = event => {
+          if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) this.pdf_viewer.events.onNext({autoPlay: true});
+        };
+
+        this.audio_player.onloadeddata = event => {
+          if(event.autoPlay) this.audio_player.startPlayback();
+        };
+
+        if(this.edit_mode) {
+          this.audio_recorder.onrecordingstarted = () => {
+            this.pdf_viewer.disable();
+          };
+
+          this.audio_recorder.onrecordingcreated = (blob) => {
+            this.ignore.slides[this.slide_nr - 1].newAudio = blob;
+            this.audio_player.loadAudio(this.ignore.slides[this.slide_nr - 1].newAudio);
+            this.pdf_viewer.enable();
+            render(true);
+          };
+        }
 
         // define routes and log 'ready' event
         this.routing && this.routing.define( { slide: number => { this.slide_nr = number; render(); } } );
@@ -148,6 +171,9 @@
             this.ignore.slides.push( { key: page, content: page } );
         }
 
+        //load audio_player
+        await this.audio_player.start({ dark: this.dark });
+
         // render slide
         if ( this.routing && this.routing.get() )
           await this.routing.refresh();
@@ -163,8 +189,7 @@
 
         //initialize editMode
         if(this.edit_mode){
-          this.audioRecorderComponent = await this.audio_recorder.start( { dark: this.dark } );
-          if(this.audio_recorder) $.setContent( this.element.querySelector( '#audio-recorder' ), this.audioRecorderComponent.root );
+          await this.audio_recorder.start( { dark: this.dark } );
         }
 
         // trigger 'onstart' callback
@@ -178,12 +203,21 @@
        */
       this.getValue = () => { return { slide_nr: this.slide_nr, slides: $.clone( this.ignore.slides ) } };
 
+      this.enableAutoPlay = () => {
+        this.auto_play = true;
+      };
+
+      this.disableAutoPlay = () => {
+        this.auto_play = false;
+      };
+
       /**
        * renders/updates content
        * @param {boolean} [skip] - skip rendering of inner apps
+       * @param {boolean} [controlledByAutoPlay] - skip rendering of inner apps
        * @returns {Promise<void>}
        */
-      const render = async skip => {
+      const render = async (skip, controlledByAutoPlay = false) => {
 
         /**
          * slide data
@@ -201,6 +235,17 @@
 
         // rendering of inner apps can be skipped
         if ( skip ) return;
+
+        //render audio player
+        const audio_player_element = this.element.querySelector( '#audio-player' );
+        !audio_player_element.innerHTML && $.setContent( audio_player_element, this.audio_player.root );
+        this.audio_player.loadAudio(slide_data.newAudio ?? slide_data.audio, false, controlledByAutoPlay);
+
+        //render audio_recorder
+        if(this.edit_mode){
+          const audio_recorder_element = this.element.querySelector( '#audio-recorder' );
+          !audio_recorder_element.innerHTML && $.setContent(audio_recorder_element, this.audio_recorder.root );
+        }
 
         /**
          * <main> element of PDF Viewer
@@ -279,11 +324,6 @@
         }
         slide_data._description && $.setContent( description_element, slide_data._description );
 
-        if(this.audio_player && slide_data.audio){
-          const audioPlayerComponent = await this.audio_player.start( { audio: slide_data.audio, dark: this.dark } );
-          $.setContent( this.element.querySelector( '#audio-player' ), audioPlayerComponent.root);
-        }
-
         // render comments
         if ( this.comment && slide_data.commentary !== false ) {
           if ( !slide_data.comments )
@@ -342,13 +382,24 @@
         },
 
         onRevertRecording: () => {
-          this.audioRecorderComponent.deleteRecording();
+          this.audio_recorder.resetRecorder();
+          this.ignore.slides[this.slide_nr - 1].newAudio = undefined;
+          render();
         },
 
         onDeleteRecording: () => {
-          this.ignore.slides[ this.slide_nr - 1 ].audio = null;
-          render(true);
+          this.ignore.slides[ this.slide_nr - 1 ].audio = '';
           events.onRevertRecording();
+        },
+
+        onEnableAutoPlay: () => {
+          this.enableAutoPlay();
+          render(true);
+        },
+
+        onDisableAutoPlay: () => {
+          this.disableAutoPlay();
+          render(true);
         }
 
       };

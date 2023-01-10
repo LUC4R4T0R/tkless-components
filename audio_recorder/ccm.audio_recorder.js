@@ -20,11 +20,12 @@
             "dark": false,
             "helper": [ "ccm.load", "https://ccmjs.github.io/akless-components/modules/versions/helper-8.4.1.min.mjs" ],
             "html": [ "ccm.load", "https://ccmjs.github.io/tkless-components/audio_recorder/resources/templates-v1.min.mjs" ],
-//    "lang": [ "ccm.start", "https://ccmjs.github.io/akless-components/lang/versions/ccm.lang-1.1.0.min.js" ],
-//    "onchange": ( { name, instance, before } ) => { console.log( name, instance.slide_nr, !!before ) },
-//    "onready": event => console.log( event ),
-//    "onstart": instance => { console.log( 'start', instance.slide_nr ) },
-            "onrecordingcreated": blob => { console.log('a new recording has been created:', blob, blob instanceof Blob) }
+//          "lang": [ "ccm.start", "https://ccmjs.github.io/akless-components/lang/versions/ccm.lang-1.1.0.min.js" ],
+//          "onchange": ( { name, instance, before } ) => { console.log( name, instance.slide_nr, !!before ) },
+//          "onready": event => console.log( event ),
+//          "onstart": instance => { console.log( 'start', instance.slide_nr ) },
+//          "onrecordingstarted": ({name: 'recordingstarted', 'before': true}) => { console.log('recording started') },
+            "onrecordingcreated": blob => { console.log('a new recording has been created:', blob) }
         },
         Instance: function () {
 
@@ -33,12 +34,6 @@
              * @type {Object.<string,Function>}
              */
             let $;
-
-            /**
-             * page element of PDF Viewer
-             * @type {Element}
-             */
-            let page_element;
 
             /**
              * when the instance is created, when all dependencies have been resolved and before the dependent sub-instances are initialized and ready
@@ -56,7 +51,6 @@
 
                 this.recordingTime = 0;
                 this.microphoneEnabled = false;
-                this.audioFile = null;
             };
 
             /**
@@ -119,7 +113,8 @@
                 }
             }
 
-            this.startRecording = () => {
+            this.startRecording = async () => {
+                await this.onrecordingstarted({name: 'recordingstarted', 'before': true});
                 this.mediaRecorder.start();
                 startAudioLevelMeter();
                 resetRecordingTimer();
@@ -145,24 +140,19 @@
                 startRecordingTimer();
             }
 
-            this.setAudioFile = async (file) => {
-                this.audioFile = file;
-            }
-
-            this.deleteRecording = () => {
+            this.resetRecorder = () => {
                 if(this.mediaRecorder.state === 'recording' || this.mediaRecorder.state === 'paused') this.stopRecording();
-                this.setAudioFile(null);
                 resetRecordingTimer();
                 updateRecordingTime();
             }
 
-            const displayRecordingTime = (seconds) => {
+            this.displayRecordingTime = (seconds) => {
                 this.element.querySelector('#recording-time>#current').textContent = this.getTimeString(seconds);
             };
 
             const updateRecordingTime = () => {
-                if(!this.recordingTime && !this.recordingStart && !this.audioFile) displayRecordingTime(0);
-                else displayRecordingTime(((this.recordingStart ? Date.now() - this.recordingStart : 0) + this.recordingTime) / 1000);
+                if(!this.recordingTime && !this.recordingStart) this.displayRecordingTime(0);
+                else this.displayRecordingTime(((this.recordingStart ? Date.now() - this.recordingStart : 0) + this.recordingTime) / 1000);
             };
 
             const startRecordingTimer = () => {
@@ -182,8 +172,10 @@
 
             let rafID = null;
             const drawAudioMeterLoop = (time) => {
-                setAudioVolumeMeterLevel(this.audioMeter.volume * 2, this.audioMeter.clipping);
-                if(this.enableAudioVolumeMeter) rafID = window.requestAnimationFrame(drawAudioMeterLoop);
+                if(this.enableAudioVolumeMeter) {
+                    setAudioVolumeMeterLevel(this.audioMeter.volume * 2, this.audioMeter.clipping);
+                    rafID = window.requestAnimationFrame(drawAudioMeterLoop);
+                }
             }
 
             const setAudioVolumeMeterLevel = (level) => {
@@ -237,8 +229,6 @@
                         this.mediaRecorder = new MediaRecorder(stream, {mimeType: this.mimeType});
 
                         this.mediaRecorder.addEventListener("dataavailable", async event => {
-                            //this.audioFiles[this.slide_nr - 1] = {name: randomString(64)+this.fileSuffix, data: event.data};
-                            await this.setAudioFile(URL.createObjectURL(event.data));
                             await this.onrecordingcreated(event.data);
                             render();
                         });

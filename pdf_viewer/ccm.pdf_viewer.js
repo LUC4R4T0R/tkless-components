@@ -169,6 +169,8 @@
         this.dark === 'auto' && this.element.classList.add( 'dark_auto' );
         this.dark === true && this.element.classList.add( 'dark_mode' );
 
+        this.enableControls = true;
+
         // Trigger 'ready' event.
         this.onready && await this.onready( { instance: this } );
 
@@ -256,9 +258,9 @@
         },
 
         /** When 'next page' button is clicked. */
-        onNext: () => {
+        onNext: (event) => {
           if ( page_nr >= file.numPages ) return;
-          if ( this.onchange && this.onchange( { name: last_event = 'next', page: page_nr, instance: this, before: true } ) ) return;
+          if ( this.onchange && this.onchange( { name: last_event = 'next', page: page_nr, instance: this, before: true, data: event} ) ) return;
           this.goTo( ++page_nr );
         },
 
@@ -299,6 +301,17 @@
 
       /** When an observed responsive breakpoint triggers. */
       this.onbreakpoint = this.refresh = () => renderPage();
+
+      this.enable = () => {
+        this.enableControls = true;
+        render('controls');
+      }
+
+      this.disable = () => {
+        this.enableControls = false;
+        console.log('disabling');
+        render('controls');
+      }
 
       /**
        * Renders an HTML template.

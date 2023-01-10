@@ -25,10 +25,13 @@ export function main( instance, events ) {
     <main>
       <header></header>
       <section id="viewer"></section>
-      <audio src="${ slide_data.audio || '' }" controls ?data-invisible=${ !slide_data.audio }></audio>
       <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
-        <div id="audio-player">
-
+        <div id="audio-player"></div>
+        <div id="autoplay-on" class="button" @click=${events.onDisableAutoPlay} ?hidden=${!instance.auto_play} title="Autoplay" role="button">
+          <i class="bi bi-collection-play" ></i>
+        </div>
+        <div id="autoplay-off" class="button" @click=${events.onEnableAutoPlay}  ?hidden=${instance.auto_play} title="Manual Playback" role="button">
+          <i class="bi bi-play-btn" ></i>
         </div>
         <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description }>
           <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
@@ -41,7 +44,7 @@ export function main( instance, events ) {
         <div id="audio-recorder"></div>
         <div id="rec-del">
           <div id="revert-recording" class="button" @click=${events.onRevertRecording} role="button"
-               ?hidden="${false}" title="Revert Recording">
+               ?hidden="${false}" title="Revert Recording"  ?data-hidden=${ !slide_data.newAudio }>
             <i class="bi bi-arrow-counterclockwise"></i>
           </div>
           <div id="delete-recording" class="button" @click=${events.onDeleteRecording} role="button"

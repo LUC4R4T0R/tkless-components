@@ -33,7 +33,7 @@
 #bar>#recording-time{
   display: flex;
   align-items: center;
-  padding: 0 0.5rem;
+  padding: 0 1em;
 }
 
 #bar i.bi{
@@ -92,7 +92,7 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
-  padding: 0 0.5rem;
+  padding: 0 1em;
 }
 
 #audio-level-meter>.meter{

@@ -53,19 +53,21 @@ export function controls( app, page_nr, pages ) {
   return html`
     <nav id="controls" ?data-hidden=${ pages <= 1 }>
       <div id="first" title="${ app.text.first }" data-lang="first-title" @click=${ app.events.onFirst }>
-        <i class="bi bi-skip-start" ?disabled=${ page_nr === 1 }></i>
+        <i class="bi bi-skip-start" ?disabled=${ !app.enableControls || page_nr === 1 }></i>
       </div>
       <div id="prev" title="${ app.text.prev }" data-lang="prev-title" @click=${ app.events.onPrev }>
-        <i class="bi bi-caret-left" ?disabled=${ page_nr === 1 }></i>
+        <i class="bi bi-caret-left" ?disabled=${ !app.enableControls || page_nr === 1 }></i>
       </div>
       <div id="jump">
-        <input type="text" size="${ pages.toString().length }" title="${ app.text.jump }" placeholder="${ page_nr } / ${ pages }" data-lang="jump-title" @change=${ app.events.onJump }>
+        <input type="text" size="${ pages.toString().length }" title="${ app.text.jump }"
+               placeholder="${ page_nr } / ${ pages }" data-lang="jump-title" @change=${ app.events.onJump }
+                ?disabled="${!app.enableControls}">
       </div>
       <div id="next" title="${ app.text.next }" data-lang="next-title" @click=${ app.events.onNext }>
-        <i class="bi bi-caret-right" ?disabled=${ page_nr === pages }></i>
+        <i class="bi bi-caret-right" ?disabled=${ !app.enableControls || page_nr === pages }></i>
       </div>
       <div id="last" title="${ app.text.last }" data-lang="last-title" @click=${ app.events.onLast }>
-        <i class="bi bi-skip-end" ?disabled=${ page_nr === pages }></i>
+        <i class="bi bi-skip-end" ?disabled=${ !app.enableControls || page_nr === pages }></i>
       </div>
     </nav>
   `;
