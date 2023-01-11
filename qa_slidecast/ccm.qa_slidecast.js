@@ -85,6 +85,8 @@
         if ( this.lang ) this.lang.dark = this.dark;
         this.pdf_viewer.dark = this.dark;
 
+        this.slideChangeInterval = 0;
+        this.displaySettings = false;
       };
 
       /**
@@ -136,7 +138,7 @@
         } );
 
         this.audio_player.onplaybackfinished = event => {
-          if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) this.pdf_viewer.events.onNext({autoPlay: true});
+          if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) setTimeout(() => {this.pdf_viewer.events.onNext({autoPlay: true})}, this.slideChangeInterval);
         };
 
         this.audio_player.onloadeddata = event => {
@@ -415,6 +417,22 @@
 
         onDisableAutoPlay: () => {
           this.disableAutoPlay();
+          render(true);
+        },
+
+        onChangePlaybackRate: (event) => {
+          this.audio_player.setPlaybackRate(event.target.value);
+          render(true);
+        },
+
+        onChangeSlideChangeInterval: (event) => {
+          this.slideChangeInterval = event.target.value;
+          render(true);
+        },
+
+        onToggleSettings: () => {
+          console.log('toggle');
+          this.displaySettings = !this.displaySettings;
           render(true);
         }
 

@@ -27,6 +27,27 @@ export function main( instance, events ) {
       <section id="viewer"></section>
       <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
         <div id="audio-player"></div>
+        <div id="settings">
+          <div id="settings-button" class="button" @click=${events.onToggleSettings} title="Settings" role="button">
+            <i class="bi bi-gear${ instance.displaySettings ? '-fill' : '' }" ></i>
+          </div>
+          <div id="settings-popup" ?hidden=${!instance.displaySettings}>
+            <div class="row">
+              <label>Playback Rate</label>
+              <div  class="controls">
+                <input type="range" class="form-range" value="1" min="0.5" max="2" step="0.25" @change="${events.onChangePlaybackRate}" >
+                <span>&#215;${instance.audio_player.playbackRate}</span>
+              </div>
+            </div>
+            <div class="row">
+              <label>Slide-change Interval</label>
+              <div class="controls">
+                <input type="range" class="form-range" value="0" min="0" max="10000" step="1000" @change="${events.onChangeSlideChangeInterval}" >
+                <span>${instance.slideChangeInterval / 1000} s</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div id="autoplay-on" class="button" @click=${events.onDisableAutoPlay} ?hidden=${!instance.auto_play} title="Autoplay" role="button">
           <i class="bi bi-collection-play" ></i>
         </div>

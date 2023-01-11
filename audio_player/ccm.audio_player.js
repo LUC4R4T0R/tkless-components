@@ -50,6 +50,7 @@
 
                 this.audioElement = new Audio();
                 this.playing = false;
+                this.playbackRate = 1;
             };
 
             /**
@@ -126,6 +127,7 @@
                 });
 
                 this.audioElement.addEventListener('loadeddata', async (event) => {
+                    this.audioElement.playbackRate = this.playbackRate;
                     const eventObj = {name: 'loadeddata', instance: this, data: event, autoPlay: this.controlledByAutoPlay};
                     if(this.controlledByAutoPlay){
                         this.controlledByAutoPlay = false;
@@ -172,6 +174,11 @@
             this.getVolume = () => {
                 return this.audioElement.volume;
             };
+
+            this.setPlaybackRate = (rate) => {
+                this.playbackRate = rate;
+                this.audioElement.playbackRate = rate;
+            }
 
             this.setVolume = (volume) => {
                 this.audioElement.volume = volume;
