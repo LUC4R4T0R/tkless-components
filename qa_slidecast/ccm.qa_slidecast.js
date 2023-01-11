@@ -106,7 +106,7 @@
               case 'next':  slide = this.slide_nr + 1;         break;
               case 'last':  slide = this.ignore.slides.length; break;
             }
-            this.audio_recorder.resetRecorder();
+            if(this.audio_recorder) this.audio_recorder.resetRecorder();
             if ( !( slide >= 1 && slide <= this.ignore.slides.length && slide !== this.slide_nr ) ) return;
             this.slide_nr = slide;
             this.routing && this.routing.set( 'slide-' + slide );  // update route
@@ -118,6 +118,22 @@
           }
           return true;
         };
+
+        this.element.addEventListener( 'keydown', event => {
+          switch ( event.key ) {
+            case ' ':
+              if(!this.audio_player.playing) this.audio_player.startPlayback();
+              else this.audio_player.pausePlayback();
+              event.preventDefault();
+              break;
+            case '+':
+              this.audio_player.setVolume(Math.min(1, this.audio_player.getVolume() + 0.1));
+              break;
+            case '-':
+              this.audio_player.setVolume(Math.max(0, this.audio_player.getVolume() - 0.1));
+              break;
+          }
+        } );
 
         this.audio_player.onplaybackfinished = event => {
           if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) this.pdf_viewer.events.onNext({autoPlay: true});

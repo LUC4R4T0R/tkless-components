@@ -50,7 +50,6 @@
 
                 this.audioElement = new Audio();
                 this.playing = false;
-                this.playbackVolume = 1;
             };
 
             /**
@@ -170,6 +169,10 @@
                 this.audioElement.pause();
             };
 
+            this.getVolume = () => {
+                return this.audioElement.volume;
+            };
+
             this.setVolume = (volume) => {
                 this.audioElement.volume = volume;
             };
@@ -180,7 +183,7 @@
 
             this.mute = () => {
                 this.playbackMuted = true;
-                this.prevPlaybackVolume = this.playbackVolume;
+                this.prevPlaybackVolume = this.audioElement.volume;
                 this.setVolume(0);
             };
 

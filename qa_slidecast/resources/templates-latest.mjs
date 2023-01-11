@@ -66,7 +66,7 @@ export function main( instance, events ) {
 export const image = '<img src="%%">';
 
 /**
- * returns the HTML template for an video
+ * returns the HTML template for a video
  * @type {string}
  */
 export const video = '<video src="%%" controls>';
