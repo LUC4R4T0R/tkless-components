@@ -138,7 +138,7 @@
         // Setup PDF.js library.
         window[ this.pdfjs.namespace ].GlobalWorkerOptions.workerSrc = this.pdfjs.worker;
         this.pdfjs = pdfjsLib;
-
+        this.isFullscreen = false;
       };
 
       /**
@@ -221,6 +221,13 @@
         else
           renderPage();
 
+      };
+
+      this.setFullscreen = (value) => {
+        this.isFullscreen = value;
+        if(value) this.element.classList.add('fullscreen');
+        else this.element.classList.remove('fullscreen');
+        renderPage();
       };
 
       /**
@@ -309,7 +316,6 @@
 
       this.disable = () => {
         this.enableControls = false;
-        console.log('disabling');
         render('controls');
       }
 
@@ -341,15 +347,34 @@
         if ( rendering ) return pending = true; rendering = true;
 
         // Get the available width for the PDF page.
-        const desiredWidth = page_elem.clientWidth;
+        let desiredWidth;
+        let desiredHeight;
+
+        if(this.isFullscreen){
+          desiredWidth = window.innerWidth;
+          desiredHeight = window.innerHeight;
+        }else{
+          desiredWidth = page_elem.clientWidth;
+          desiredHeight = page_elem.clientHeight;
+        }
 
         file.getPage( page_nr ).then( page => {       // Get current PDF page.
           render( 'controls' );                       // Update slide controls.
 
+          let scaledViewport;
+
           // Scale page viewport.
           const viewport = page.getViewport( { scale: 1 } );
-          const scale = desiredWidth / viewport.width;
-          const scaledViewport = page.getViewport( { scale: scale } );
+          if(this.isFullscreen){
+            const pageAspectRatio = viewport.width / viewport.height;
+            const elementAspectRatio = desiredWidth / desiredHeight;
+            const scale = pageAspectRatio > elementAspectRatio ? desiredWidth / viewport.width : desiredHeight / viewport.height;
+            scaledViewport = page.getViewport( { scale: scale } );
+          }else{
+
+            const scale = desiredWidth / viewport.width;
+            scaledViewport = page.getViewport( { scale: scale } );
+          }
 
           const outputScale = window.devicePixelRatio || 1;       // Support HiDPI-screens.
           const canvas = this.element.querySelector( 'canvas' );  // Select <canvas> element.
