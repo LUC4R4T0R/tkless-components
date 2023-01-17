@@ -1,0 +1,22 @@
+/**
+ * @overview Default layout of <i>ccmjs</i>-based web component for table
+ * @author André Kless <andre.kless@web.de> 2022
+ * @license The MIT License (MIT)
+ * @version latest (v1)
+ */
+
+table {
+  height: fit-content;
+}
+
+tr, td, td > div {
+  height: 100%;
+}
+
+tr:not(:hover) div {
+  visibility: hidden;
+}
+
+[data-invisible] {
+  visibility: hidden;
+}

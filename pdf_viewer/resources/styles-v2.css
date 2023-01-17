@@ -13,17 +13,21 @@
   --disabled: lightgray;
   background-color: var( --bg );
   color: var( --color );
-  min-width: 350px;
-  max-width: 940px;
+  width: 100%;
   padding: 0.5em;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+#element > * {
+  width: 100%;
+  min-width: 350px;
+  max-width: 940px;
+}
+
 header {
   border: 0;
-  width: 100%;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -35,7 +39,6 @@ header > * {
 
 main {
   margin-bottom: 0.5em;
-  width: 100%;
 }
 
 main > * {
@@ -51,7 +54,6 @@ main > * {
 footer {
   border: 1px solid var( --border );
   border-radius: 5px;
-  width: 100%;
   background-color: var( --bg );
   display: flex;
 }

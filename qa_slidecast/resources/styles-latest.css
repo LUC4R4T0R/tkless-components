@@ -36,14 +36,25 @@ header > * {
   padding-left: 0.5em;
 }
 
-#control {
+.bar{
   color: var( --icons );
-  margin: 0 0.5em 0.5em;
+  margin: 0 1em 0.5em;
   border-radius: 5px;
   border: 1px solid var( --border );
+}
+
+#control {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#recorder{
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 
 audio {
@@ -51,23 +62,79 @@ audio {
   margin: 0.2em;
 }
 
-#control > div {
-  padding: 0.5em 1em;
+.bar .button {
+  padding: 0 1em;
+  position: relative;
+}
+
+#control #audio-player{
+  flex-grow: 1;
+  border-radius: 5px 0 0 5px;
+  overflow: hidden;
+  border-right: 1px solid var( --border );
 }
 
 #description,
 #comments {
   border: 1px solid var( --border );
-  margin: 0.5em;
+  margin: 0.5em 1em;
 }
 
 #description article {
   padding: 0.5em;
 }
 
+#audio-recorder{
+  flex-grow: 1;
+}
+
+#rec-del{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#settings{
+  position: relative;;
+}
+
+#settings-popup{
+  position: absolute;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  bottom: calc(100% + 0.25rem);
+  left: 0;
+  padding: 0.5rem;
+  border-radius: 5px;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+
+#settings-popup label{
+  font-size: 0.9rem;
+}
+
+#settings-popup .row:first-child{
+  margin-bottom: 0.5rem;
+}
+
+#settings-popup .controls{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#settings-popup > *{
+  margin: 0 0.25rem;
+  color: var(--color);
+}
+
+#settings-popup .controls span{
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
 i {
   font-size: 30px;
-  line-height: 30px;
   cursor: pointer;
 }
 

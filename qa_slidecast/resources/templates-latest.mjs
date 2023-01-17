@@ -25,13 +25,53 @@ export function main( instance, events ) {
     <main>
       <header></header>
       <section id="viewer"></section>
-      <section id="control" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
-        <div title="${ instance.text.description || '' }" data-lang="description-title" ?data-hidden=${ !instance.description }>
+      <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
+        <div id="audio-player"></div>
+        <div id="settings">
+          <div id="settings-button" class="button" @click=${events.onToggleSettings} title="Settings" role="button">
+            <i class="bi bi-gear${ instance.displaySettings ? '-fill' : '' }" ></i>
+          </div>
+          <div id="settings-popup" ?hidden=${!instance.displaySettings}>
+            <div class="row">
+              <label>Playback Rate</label>
+              <div  class="controls">
+                <input type="range" class="form-range" value="1" min="0.5" max="2" step="0.25" @change="${events.onChangePlaybackRate}" >
+                <span>&#215;${instance.audio_player.playbackRate}</span>
+              </div>
+            </div>
+            <div class="row">
+              <label>Slide-change Interval</label>
+              <div class="controls">
+                <input type="range" class="form-range" value="0" min="0" max="10000" step="1000" @change="${events.onChangeSlideChangeInterval}" >
+                <span>${instance.slideChangeInterval / 1000} s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="autoplay-on" class="button" @click=${events.onDisableAutoPlay} ?hidden=${!instance.auto_play} title="Autoplay" role="button">
+          <i class="bi bi-collection-play" ></i>
+        </div>
+        <div id="autoplay-off" class="button" @click=${events.onEnableAutoPlay}  ?hidden=${instance.auto_play} title="Manual Playback" role="button">
+          <i class="bi bi-play-btn" ></i>
+        </div>
+        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description }>
           <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
         </div>
-        <audio src="${ slide_data.audio || '' }" controls ?data-invisible=${ !slide_data.audio }></audio>
-        <div title="${ instance.text.comments || '' }" data-lang="comments-title" ?data-hidden=${ !instance.comment }>
+        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment }>
           <i class="bi bi-chat-square-text${ instance.open === 'comments' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ slide_data.commentary === false } @click=${ events.onComments }></i>
+        </div>
+      </section>
+      <section id="recorder" class="bar" ?data-hidden=${ !instance.edit_mode }>
+        <div id="audio-recorder"></div>
+        <div id="rec-del">
+          <div id="revert-recording" class="button" @click=${events.onRevertRecording} role="button"
+               ?hidden="${false}" title="Revert Recording"  ?data-hidden=${ !slide_data.newAudio }>
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </div>
+          <div id="delete-recording" class="button" @click=${events.onDeleteRecording} role="button"
+               ?hidden="${false}" title="Delete Recording" ?data-hidden=${ !slide_data.audio }>
+            <i class="bi bi-trash"></i>
+          </div>
         </div>
       </section>
       <section id="description" ?data-hidden=${ !instance.description || !slide_data.description || instance.open !== 'description' && instance.open !== 'both' }></section>
@@ -47,7 +87,7 @@ export function main( instance, events ) {
 export const image = '<img src="%%">';
 
 /**
- * returns the HTML template for an video
+ * returns the HTML template for a video
  * @type {string}
  */
 export const video = '<video src="%%" controls>';

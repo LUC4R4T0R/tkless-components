@@ -1,11 +1,15 @@
+"use strict";
+
 /**
  * @overview ccmjs-based web component for slidecast with commentary
  * @author Tea Kless <tea.kless@web.de> 2020
  * @author André Kless <andre.kless@web.de> 2021-2022
  * @author Luca Ringhausen <luca.ringhausen@h-brs.de> 2022 (text-layer feature)
  * @license The MIT License (MIT)
- * @version latest (4.0.0)
+ * @version latest (4.1.0)
  * @changes
+ * version 4.1.0 (14.12.2022):
+ * - uses ccm.pdf_viewer.js v8.1.0 as default (support of annotation layer)
  * version 4.0.0 (24.11.2022):
  * - Uses ccmjs v27.4.2 as default.
  * - Uses helper.mjs v8.4.1 as default.
@@ -23,26 +27,30 @@
     config: {
 //    "comment": [ "ccm.component", "https://ccmjs.github.io/tkless-components/comment/versions/ccm.comment-7.2.0.min.js" ],
       "css": [ "ccm.load",
-        "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/styles-latest.min.css",
+        "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/styles-v1.min.css",
         "https://ccmjs.github.io/tkless-components/libs/bootstrap-5/css/bootstrap-icons.min.css",
         { "url": "https://ccmjs.github.io/tkless-components/libs/bootstrap-5/css/bootstrap-fonts.min.css", "context": "head" },
       ],
       "dark": false,
 //    "description": true,
       "helper": [ "ccm.load", "https://ccmjs.github.io/akless-components/modules/versions/helper-8.4.1.min.mjs" ],
-      "html": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/templates-latest.mjs" ],
+      "html": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/templates-v1.min.mjs" ],
 //    "ignore": { "slides": [] },
 //    "lang": [ "ccm.start", "https://ccmjs.github.io/akless-components/lang/versions/ccm.lang-1.1.0.min.js" ],
 //    "onchange": ( { name, instance, before } ) => { console.log( name, instance.slide_nr, !!before ) },
 //    "onready": event => console.log( event ),
 //    "onstart": instance => { console.log( 'start', instance.slide_nr ) },
       "open": "both",
-      "pdf_viewer": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/pdf_viewer/versions/ccm.pdf_viewer-8.0.0.min.js" ],
+      "pdf_viewer": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/pdf_viewer/versions/ccm.pdf_viewer-8.1.0.min.js" ],
+      "audio_player": [ "ccm.instance", "https://ccmjs.github.io/tkless-components/audio_player/versions/ccm.audio_player-1.0.0.min.js" ],
 //    "routing": [ "ccm.instance", "https://ccmjs.github.io/akless-components/routing/versions/ccm.routing-3.0.0.min.js" ],
       "slide_nr": 1,
       "ignore": {},
-      "text": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/resources.mjs#text_en" ],
-//    "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/versions/ccm.youtube-2.1.1.js" ]
+      "text": [ "ccm.load", "https://ccmjs.github.io/tkless-components/qa_slidecast/resources/resources-latest.min.mjs#text_en" ],
+//    "youtube": [ "ccm.component", "https://ccmjs.github.io/akless-components/youtube/versions/ccm.youtube-2.1.1.js" ],
+      "edit_mode": false,
+//    "audio_recorder": ["ccm.instance", "https://ccmjs.github.io/tkless-components/audio_recorder/versions/ccm.audio_recorder-1.0.0.js"]
+      "auto_play": true
     },
     Instance: function () {
 
@@ -77,6 +85,8 @@
         if ( this.lang ) this.lang.dark = this.dark;
         this.pdf_viewer.dark = this.dark;
 
+        this.slideChangeInterval = 0;
+        this.displaySettings = false;
       };
 
       /**
@@ -101,10 +111,11 @@
               case 'next':  slide = this.slide_nr + 1;         break;
               case 'last':  slide = this.ignore.slides.length; break;
             }
+            if(this.audio_recorder) this.audio_recorder.resetRecorder();
             if ( !( slide >= 1 && slide <= this.ignore.slides.length && slide !== this.slide_nr ) ) return;
             this.slide_nr = slide;
             this.routing && this.routing.set( 'slide-' + slide );  // update route
-            render();
+            render(false, event.data?.autoPlay);
           }
           else {
             updateControls();
@@ -112,6 +123,43 @@
           }
           return true;
         };
+
+        this.element.addEventListener( 'keydown', event => {
+          switch ( event.key ) {
+            case ' ':
+              if(!this.audio_player.playing) this.audio_player.startPlayback();
+              else this.audio_player.pausePlayback();
+              event.preventDefault();
+              break;
+            case '+':
+              this.audio_player.setVolume(Math.min(1, this.audio_player.getVolume() + 0.1));
+              break;
+            case '-':
+              this.audio_player.setVolume(Math.max(0, this.audio_player.getVolume() - 0.1));
+              break;
+          }
+        } );
+
+        this.audio_player.onplaybackfinished = event => {
+          if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) setTimeout(() => {this.pdf_viewer.events.onNext({autoPlay: true})}, this.slideChangeInterval);
+        };
+
+        this.audio_player.onloadeddata = event => {
+          if(event.autoPlay) this.audio_player.startPlayback();
+        };
+
+        if(this.edit_mode) {
+          this.audio_recorder.onrecordingstarted = () => {
+            this.pdf_viewer.disable();
+          };
+
+          this.audio_recorder.onrecordingcreated = (blob) => {
+            this.ignore.slides[this.slide_nr - 1].newAudio = blob;
+            this.audio_player.loadAudio(this.ignore.slides[this.slide_nr - 1].newAudio);
+            this.pdf_viewer.enable();
+            render(true);
+          };
+        }
 
         // define routes and log 'ready' event
         this.routing && this.routing.define( { slide: number => { this.slide_nr = number; render(); } } );
@@ -144,6 +192,9 @@
             this.ignore.slides.push( { key: page, content: page } );
         }
 
+        //load audio_player
+        await this.audio_player.start({ dark: this.dark });
+
         // render slide
         if ( this.routing && this.routing.get() )
           await this.routing.refresh();
@@ -157,6 +208,11 @@
           header && this.user && $.append( header, this.user.root );
         }
 
+        //initialize editMode
+        if(this.edit_mode){
+          await this.audio_recorder.start( { dark: this.dark } );
+        }
+
         // trigger 'onstart' callback
         this.onstart && await this.onstart( { instance: this } );
 
@@ -168,12 +224,21 @@
        */
       this.getValue = () => { return { slide_nr: this.slide_nr, slides: $.clone( this.ignore.slides ) } };
 
+      this.enableAutoPlay = () => {
+        this.auto_play = true;
+      };
+
+      this.disableAutoPlay = () => {
+        this.auto_play = false;
+      };
+
       /**
        * renders/updates content
        * @param {boolean} [skip] - skip rendering of inner apps
+       * @param {boolean} [controlledByAutoPlay] - skip rendering of inner apps
        * @returns {Promise<void>}
        */
-      const render = async skip => {
+      const render = async (skip, controlledByAutoPlay = false) => {
 
         /**
          * slide data
@@ -191,6 +256,17 @@
 
         // rendering of inner apps can be skipped
         if ( skip ) return;
+
+        //render audio player
+        const audio_player_element = this.element.querySelector( '#audio-player' );
+        !audio_player_element.innerHTML && $.setContent( audio_player_element, this.audio_player.root );
+        this.audio_player.loadAudio(slide_data.newAudio ?? slide_data.audio, false, controlledByAutoPlay);
+
+        //render audio_recorder
+        if(this.edit_mode){
+          const audio_recorder_element = this.element.querySelector( '#audio-recorder' );
+          !audio_recorder_element.innerHTML && $.setContent(audio_recorder_element, this.audio_recorder.root );
+        }
 
         /**
          * <main> element of PDF Viewer
@@ -324,6 +400,43 @@
             case 'both': this.open = 'description'; break;
           }
           render( true );
+        },
+
+        onRevertRecording: () => {
+          this.audio_recorder.resetRecorder();
+          this.ignore.slides[this.slide_nr - 1].newAudio = undefined;
+          render();
+        },
+
+        onDeleteRecording: () => {
+          this.ignore.slides[ this.slide_nr - 1 ].audio = '';
+          events.onRevertRecording();
+        },
+
+        onEnableAutoPlay: () => {
+          this.enableAutoPlay();
+          render(true);
+        },
+
+        onDisableAutoPlay: () => {
+          this.disableAutoPlay();
+          render(true);
+        },
+
+        onChangePlaybackRate: (event) => {
+          this.audio_player.setPlaybackRate(event.target.value);
+          render(true);
+        },
+
+        onChangeSlideChangeInterval: (event) => {
+          this.slideChangeInterval = event.target.value;
+          render(true);
+        },
+
+        onToggleSettings: () => {
+          console.log('toggle');
+          this.displaySettings = !this.displaySettings;
+          render(true);
         }
 
       };

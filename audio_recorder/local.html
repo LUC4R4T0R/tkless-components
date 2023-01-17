@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Luca Ringhausen <luca.ringhausen@h-brs.de> 2022">
+<meta name="license" content="The MIT License (MIT)">
+<title>Lokal | Audio Recorder</title>
+<style>
+  body {
+    margin: 0;
+    background-color: white;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: black;
+    }
+  }
+</style>
+<script src="./../libs/ccm/ccm.js"></script>
+<ccm-app ccm="latest" component="./ccm.audio_player.js" src='["ccm.load","./resources/resources-latest.mjs#local"]'></ccm-app>

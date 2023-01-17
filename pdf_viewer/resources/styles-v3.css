@@ -1,0 +1,237 @@
+/**
+ * @overview Default layout of <i>ccmjs</i>-based web component for PDF viewer.
+ * @author André Kless <andre.kless@web.de> 2021-2022
+ * @license The MIT License (MIT)
+ * @version 3
+ */
+
+#element {
+  --bg: white;
+  --color: black;
+  --border: lightgray;
+  --shadow: dimgray;
+  --disabled: lightgray;
+  background-color: var( --bg );
+  color: var( --color );
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#element > * {
+  width: 100%;
+  min-width: 350px;
+  max-width: 940px;
+}
+
+header {
+  border: 0;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+header > * {
+  padding-bottom: 0.5em;
+}
+
+main {
+  margin-bottom: 0.5em;
+}
+
+main > * {
+  position: relative;
+  border: 1px solid var( --border );
+  width: 100%;
+}
+
+#page > * {
+  width: 100%;
+}
+
+footer {
+  border: 1px solid var( --border );
+  border-radius: 5px;
+  background-color: var( --bg );
+  display: flex;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+nav > div {
+  display: flex;
+  align-items: center;
+}
+
+#controls {
+  width: 100%;
+  line-height: normal;
+}
+
+#extra {
+  border-left: 1px solid var( --border );
+}
+
+i {
+  font-size: 30px;
+  padding: 0 0.5em;
+}
+
+i:not([disabled]) {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
+a i {
+  font-size: 25px;
+}
+
+input {
+  min-width: 50px;
+  text-align: center;
+  padding: 1px 3px;
+  border: 1px solid var( --border );
+  border-radius: 5px;
+}
+
+*[disabled] {
+  color: var( --disabled );
+  cursor: not-allowed;
+}
+
+*[data-hidden] {
+  display: none;
+}
+
+#text-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 0.2;
+  line-height: 1.0;
+}
+
+#text-layer > span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0 0;
+}
+
+#text-layer ::selection {
+  background-color: #0BA1E2;
+}
+
+#annotation-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  font-family: sans-serif;
+  pointer-events: none;
+}
+
+#annotation-layer * {
+  margin: 0;
+  padding: 0;
+}
+
+#annotation-layer img[src='annotation-noicon.svg']{
+  opacity: 0;
+}
+
+#annotation-layer .linkAnnotation>a{
+  width: 100%;
+  height: 100%;
+}
+
+#annotation-layer section {
+  position: absolute;
+  box-sizing: border-box;
+  cursor: pointer;
+  transform-origin: 0 0;
+  pointer-events: auto;
+}
+
+#annotation-layer .popupContent {
+  border-top: 1px solid rgba(51, 51, 51, 1);
+  border-top-color: rgb(51, 51, 51);
+  margin-top: 3px;
+  padding-top: 3px;
+}
+
+#annotation-layer .popup {
+  position: absolute;
+  max-width: 300px;
+  background-color: rgba(255, 255, 153, 1);
+  box-shadow: 0 3px 7px rgba(136, 136, 136, 1);
+  border-radius: 3px;
+  padding: 9px;
+  margin-left: 7px;
+  cursor: pointer;
+  font: message-box;
+  white-space: normal;
+  word-wrap: break-word;
+  pointer-events: auto;
+}
+
+#annotation-layer .popup > * {
+  font-size: 1rem;
+  color: black;
+}
+
+#annotation-layer .popup h1 {
+  color: black;
+  display: inline-block;
+}
+
+#annotation-layer .popupDate {
+  display: none
+}
+
+/* Dark Mode */
+
+#element.dark_mode {
+  --bg: black;
+  --color: #b1b1b1;
+  --border: #515151;
+  --shadow: #212529;
+  --disabled: #212529;
+}
+
+#element.dark_mode input {
+  color: var( --color );
+  background-color: var( --bg );
+  border: 1px solid var( --border );
+}
+
+@media (prefers-color-scheme: dark) {
+  #element.dark_auto {
+    --bg: black;
+    --color: #b1b1b1;
+    --border: #515151;
+    --shadow: #212529;
+    --disabled: #212529;
+  }
+
+  #element.dark_auto input {
+    color: var( --color );
+    background-color: var( --bg );
+    border: 1px solid var( --border );
+  }
+}

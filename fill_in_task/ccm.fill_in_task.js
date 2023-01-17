@@ -15,6 +15,7 @@
       css: [ "ccm.load", "./resources/default.css" ],
 //    onstart: event => console.log( event ),
 //    onfinish: data => { console.log( data );  },
+//    onsolution: ( { inputs, instance } ) => { console.log( inputs ) },
       oncheck: ( { inputs, highlight,  instance } ) => {
         let correct = 0; const total = Object.keys( instance.solution ).length;
         for ( let key in inputs ) {
@@ -97,7 +98,7 @@
       /*sample_solution: [ "ccm.instance", "https://ccmjs.github.io/tkless-components/table/versions/ccm.table-5.1.0.js", [
         "ccm.load", "https://ccmjs.github.io/tkless-components/table/resources/resources.mjs#demo"
       ] ],*/
-      //show_solution: true,
+//    show_solution: true,
       /*solution: {
         "1-4": "4",
         "1-5": "7,00",
@@ -229,6 +230,13 @@
             $.append( $main.querySelector( 'fieldset' ), this.sample_solution.root );
             setDisabled('fill-in-task-solution', true );
           }
+
+          let form_data = $.formData( this.element );
+          //disable all input/select fields
+          this.element.querySelector( 'input' ) && this.element.querySelectorAll( 'input' ). forEach( input =>  { input.disabled = true; } );
+          this.element.querySelector( 'select' ) && this.element.querySelectorAll( 'select' ). forEach( select =>  { select.disabled = true; } );
+
+          this.onsolution && this.onsolution( { inputs: form_data, instance: this } );
         },
         onFinish: () => {  $.onFinish( this );  }
       };

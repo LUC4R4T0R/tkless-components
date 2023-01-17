@@ -1,3 +1,5 @@
+/*----------------------------------------------------- DEPRECATED ---------------------------------------------------*/
+
 /**
  * @overview Data-based resources of <i>ccmjs</i>-based web component for PDF viewer.
  * @author André Kless <andre.kless@web.de> 2021-2022

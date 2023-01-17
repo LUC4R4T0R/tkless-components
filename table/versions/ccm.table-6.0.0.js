@@ -133,7 +133,7 @@
       css: [ "ccm.load", "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
         "https://ccmjs.github.io/tkless-components/table/resources/default.css"
       ],
-      helper: [ "ccm.load", { "url": "https://ccmjs.github.io/akless-components/modules/versions/helper-8.4.2.min.mjs" } ]
+      helper: [ "ccm.load", { "url": "https://ccmjs.github.io/akless-components/modules/versions/helper-8.4.2.mjs" } ]
     },
 
     Instance: function () {
