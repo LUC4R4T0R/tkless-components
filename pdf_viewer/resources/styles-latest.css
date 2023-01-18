@@ -119,6 +119,15 @@ nav > div {
   border-left: 1px solid var( --border );
 }
 
+.fullscreen footer{
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fullscreen footer.show{
+  opacity: 1;
+}
+
 i {
   font-size: 30px;
   padding: 0 0.5em;

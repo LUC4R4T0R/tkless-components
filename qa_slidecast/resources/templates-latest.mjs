@@ -25,7 +25,14 @@ export function main( instance, events ) {
     <main class="${ instance.isFullscreen ? 'fullscreen' : '' }">
       <header ?data-hidden=${instance.isFullscreen}></header>
       <section id="viewer"></section>
-      <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
+      <section id="control" @mouseenter="${events.onHoverControls}" @mouseleave="${events.onLeaveControls}"  class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
+        <div id="control-gap-filler"></div>
+        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description || instance.isFullscreen }>
+          <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
+        </div>
+        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment || instance.isFullscreen }>
+          <i class="bi bi-chat-square-text${ instance.open === 'comments' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ slide_data.commentary === false } @click=${ events.onComments }></i>
+        </div>
         <div id="audio-player"></div>
         <div id="settings">
           <div id="settings-button" class="button" @click=${events.onToggleSettings} title="Settings" role="button">
@@ -35,14 +42,14 @@ export function main( instance, events ) {
             <div class="row">
               <label>Playback Rate</label>
               <div  class="controls">
-                <input type="range" class="form-range" value="1" min="0.5" max="2" step="0.25" @change="${events.onChangePlaybackRate}" >
+                <input type="range" class="form-range" value="1" min="0.5" max="2" step="0.25" @input="${events.onChangePlaybackRate}" >
                 <span>&#215;${instance.audio_player.playbackRate}</span>
               </div>
             </div>
             <div class="row">
               <label>Slide-change Interval</label>
               <div class="controls">
-                <input type="range" class="form-range" value="0" min="0" max="10000" step="1000" @change="${events.onChangeSlideChangeInterval}" >
+                <input type="range" class="form-range" value="0" min="0" max="10000" step="1000" @input="${events.onChangeSlideChangeInterval}" >
                 <span>${instance.slideChangeInterval / 1000} s</span>
               </div>
             </div>
@@ -56,12 +63,6 @@ export function main( instance, events ) {
         </div>
         <div id="fullscreen" class="button" @click=${events.onToggleFullscreen} title="Fullscreen" role="button">
           <i class="bi bi-fullscreen${ instance.isFullscreen ? '-exit' : '' }" ></i>
-        </div>
-        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description || instance.isFullscreen }>
-          <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
-        </div>
-        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment || instance.isFullscreen }>
-          <i class="bi bi-chat-square-text${ instance.open === 'comments' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ slide_data.commentary === false } @click=${ events.onComments }></i>
         </div>
       </section>
       <section id="recorder" class="bar" ?data-hidden=${ !instance.edit_mode || instance.isFullscreen }>

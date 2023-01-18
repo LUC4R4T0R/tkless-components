@@ -125,6 +125,9 @@
           return true;
         };
 
+        this.pdf_viewer.onhovercontrols = events.onHoverControls;
+        this.pdf_viewer.onleavecontrols = events.onLeaveControls;
+
         this.element.addEventListener( 'keydown', event => {
           switch ( event.key ) {
             case ' ':
@@ -337,7 +340,7 @@
                 if ( content.includes( 'youtu' ) ) {
                   if ( !slide_data._content ) {
                     const video = content.split( '/' ).pop().split( '?v=' ).pop().split( '&' ).shift();
-                    const app = await this.youtube.start( { video: video, dark: this.dark } );
+                    const app = await this.youtube.start( { video: video, dark: this.dark, fullscreen: this.isFullscreen } );
                     slide_data._content = app.root;
                   }
                 }
@@ -467,7 +470,6 @@
         },
 
         onToggleSettings: () => {
-          console.log('toggle');
           this.displaySettings = !this.displaySettings;
           render(true);
         },
@@ -475,6 +477,18 @@
         onToggleFullscreen: () => {
           if(this.isFullscreen) this.closeFullScreen();
           else this.openFullscreen();
+        },
+
+        onHoverControls: (event) => {
+          if(!this.isFullscreen) return;
+          this.element.querySelector('#control').classList.add('show');
+          if(event) this.pdf_viewer.events.onHoverControls();
+        },
+
+        onLeaveControls: (event) => {
+          if(!this.isFullscreen) return;
+          this.element.querySelector('#control').classList.remove('show');
+          if(event) this.pdf_viewer.events.onLeaveControls();
         }
 
       };

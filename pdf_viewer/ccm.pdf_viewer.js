@@ -68,6 +68,8 @@
 //    "onchange": event => console.log( event ),
 //    "onready": event => console.log( event ),
 //    "onstart": event => console.log( event ),
+//    "onhovercontrols": event => console.log( event ),
+//    "onleavecontrols": event => console.log( event ),
       "page": 1,
       "pdf": "https://ccmjs.github.io/tkless-components/pdf_viewer/resources/demo/de/slides.pdf",
       "pdfjs": {
@@ -279,7 +281,19 @@
         },
 
         /** When 'download' button is clicked. */
-        onDownload: () => this.onchange && this.onchange( { name: 'download', instance: this } )
+        onDownload: () => this.onchange && this.onchange( { name: 'download', instance: this } ),
+
+        onHoverControls: (event) => {
+          if(!this.isFullscreen) return;
+          this.element.querySelector('footer').classList.add('show');
+          if(event && this.onhovercontrols) this.onhovercontrols();
+        },
+
+        onLeaveControls: (event) => {
+          if(!this.isFullscreen) return;
+          this.element.querySelector('footer').classList.remove('show');
+          if(event && this.onleavecontrols) this.onleavecontrols();
+        }
 
       };
 
