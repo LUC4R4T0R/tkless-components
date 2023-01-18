@@ -22,8 +22,8 @@ export function main( instance, events ) {
   const slide_data = instance.ignore.slides[ instance.slide_nr - 1 ] || {};
 
   return html`
-    <main>
-      <header></header>
+    <main class="${ instance.isFullscreen ? 'fullscreen' : '' }">
+      <header ?data-hidden=${instance.isFullscreen}></header>
       <section id="viewer"></section>
       <section id="control" class="bar" ?data-hidden=${ !instance.description && !slide_data.audio && !instance.comment }>
         <div id="audio-player"></div>
@@ -54,14 +54,17 @@ export function main( instance, events ) {
         <div id="autoplay-off" class="button" @click=${events.onEnableAutoPlay}  ?hidden=${instance.auto_play} title="Manual Playback" role="button">
           <i class="bi bi-play-btn" ></i>
         </div>
-        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description }>
+        <div id="fullscreen" class="button" @click=${events.onToggleFullscreen} title="Fullscreen" role="button">
+          <i class="bi bi-fullscreen${ instance.isFullscreen ? '-exit' : '' }" ></i>
+        </div>
+        <div title="${ instance.text.description || '' }" class="button"  data-lang="description-title" ?data-hidden=${ !instance.description || instance.isFullscreen }>
           <i class="bi bi-sticky${ instance.open === 'description' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ !slide_data.description } @click=${ events.onDescription }></i>
         </div>
-        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment }>
+        <div title="${ instance.text.comments || '' }" class="button" data-lang="comments-title" ?data-hidden=${ !instance.comment || instance.isFullscreen }>
           <i class="bi bi-chat-square-text${ instance.open === 'comments' || instance.open === 'both' ? '-fill' : '' }" ?disabled=${ slide_data.commentary === false } @click=${ events.onComments }></i>
         </div>
       </section>
-      <section id="recorder" class="bar" ?data-hidden=${ !instance.edit_mode }>
+      <section id="recorder" class="bar" ?data-hidden=${ !instance.edit_mode || instance.isFullscreen }>
         <div id="audio-recorder"></div>
         <div id="rec-del">
           <div id="revert-recording" class="button" @click=${events.onRevertRecording} role="button"
@@ -74,8 +77,8 @@ export function main( instance, events ) {
           </div>
         </div>
       </section>
-      <section id="description" ?data-hidden=${ !instance.description || !slide_data.description || instance.open !== 'description' && instance.open !== 'both' }></section>
-      <section id="comments" ?data-hidden=${ !instance.comment || slide_data.commentary === false || instance.open !== 'comments' && instance.open !== 'both' }></section>
+      <section id="description" ?data-hidden=${ instance.isFullscreen || !instance.description || !slide_data.description || instance.open !== 'description' && instance.open !== 'both' }></section>
+      <section id="comments" ?data-hidden=${ instance.isFullscreen || !instance.comment || slide_data.commentary === false || instance.open !== 'comments' && instance.open !== 'both' }></section>
     </main>
   `;
 }

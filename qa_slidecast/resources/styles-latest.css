@@ -19,7 +19,7 @@
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-main {
+main:not(.fullscreen) {
   width: 100%;
   max-width: 972px;
 }
@@ -43,6 +43,12 @@ header > * {
   border: 1px solid var( --border );
 }
 
+.fullscreen .bar{
+  width: calc(100% - 1em);
+  margin: 0.5em;
+  background-color: var(--bg);
+}
+
 #control {
   display: flex;
   justify-content: space-between;
@@ -50,6 +56,12 @@ header > * {
   box-sizing: border-box;
   position: relative;
 }
+
+.fullscreen #control{
+  position: absolute;
+  bottom: 0;
+}
+
 
 #recorder{
   overflow: hidden;
@@ -103,7 +115,7 @@ audio {
   background-color: var(--bg);
   border: 1px solid var(--border);
   bottom: calc(100% + 0.25rem);
-  left: 0;
+  right: 0;
   padding: 0.5rem;
   border-radius: 5px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);

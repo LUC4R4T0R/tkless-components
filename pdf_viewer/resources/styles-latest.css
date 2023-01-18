@@ -2,7 +2,7 @@
  * @overview Default layout of <i>ccmjs</i>-based web component for PDF viewer.
  * @author André Kless <andre.kless@web.de> 2021-2022
  * @license The MIT License (MIT)
- * @version 2
+ * @version latest (v3)
  */
 
 #element {
@@ -13,17 +13,45 @@
   --disabled: lightgray;
   background-color: var( --bg );
   color: var( --color );
-  min-width: 350px;
-  max-width: 940px;
-  padding: 0.5em;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+#element.fullscreen{
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+}
+
+#element:not(.fullscreen){
+  padding: 0.5em;
+}
+
+#element.fullscreen > main{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#element:not(.fullscreen) > * {
+  width: 100%;
+  min-width: 350px;
+  max-width: 940px;
+}
+
+.fullscreen footer{
+  position: absolute;
+  bottom: calc(32px + 1em);
+  margin-bottom: 0.5em ;
+  width: calc(100% - 1em);
+}
+
 header {
   border: 0;
-  width: 100%;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -33,15 +61,31 @@ header > * {
   padding-bottom: 0.5em;
 }
 
-main {
+#element.fullscreen > header{
+  display: none;
+}
+
+#element:not(.fullscreen) main{
+  border: 1px solid var( --border );
   margin-bottom: 0.5em;
-  width: 100%;
 }
 
 main > * {
   position: relative;
-  border: 1px solid var( --border );
   width: 100%;
+  background-color: var(--bg);
+}
+
+main > img, main > video{
+  max-width: 100%;
+  max-height: 100%;
+  flex-grow: 1;
+  object-fit: contain;
+  background-color: black;
+}
+
+.fullscreen #page{
+  width: auto;
 }
 
 #page > * {
@@ -51,7 +95,6 @@ main > * {
 footer {
   border: 1px solid var( --border );
   border-radius: 5px;
-  width: 100%;
   background-color: var( --bg );
   display: flex;
 }
@@ -145,7 +188,7 @@ input {
   pointer-events: none;
 }
 
-#annotation-layer *{
+#annotation-layer * {
   margin: 0;
   padding: 0;
 }
@@ -170,8 +213,6 @@ input {
 #annotation-layer .popupContent {
   border-top: 1px solid rgba(51, 51, 51, 1);
   border-top-color: rgb(51, 51, 51);
-  border-top-style: solid;
-  border-top-width: 1px;
   margin-top: 3px;
   padding-top: 3px;
 }

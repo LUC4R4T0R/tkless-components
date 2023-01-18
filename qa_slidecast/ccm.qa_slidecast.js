@@ -87,6 +87,7 @@
 
         this.slideChangeInterval = 0;
         this.displaySettings = false;
+        this.isFullscreen = false;
       };
 
       /**
@@ -139,6 +140,18 @@
               break;
           }
         } );
+
+        this.element.addEventListener('fullscreenchange', (event) => {
+          if(document.fullscreenElement){
+            this.isFullscreen = true;
+            this.pdf_viewer.setFullscreen(true);
+          }
+          else{
+            this.isFullscreen = false;
+            this.pdf_viewer.setFullscreen(false);
+          }
+          render(true);
+        });
 
         this.audio_player.onplaybackfinished = event => {
           if(this.auto_play && !this.ignore.slides[this.slide_nr - 1].wait) setTimeout(() => {this.pdf_viewer.events.onNext({autoPlay: true})}, this.slideChangeInterval);
@@ -230,6 +243,26 @@
 
       this.disableAutoPlay = () => {
         this.auto_play = false;
+      };
+
+      this.openFullscreen = () => {
+        if (this.element.requestFullscreen) {
+          this.element.requestFullscreen();
+        } else if (this.element.webkitRequestFullscreen) {
+          this.element.webkitRequestFullscreen();
+        } else if (this.element.msRequestFullscreen) {
+          this.element.msRequestFullscreen();
+        }
+      }
+
+      this.closeFullScreen = () => {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
       };
 
       /**
@@ -437,6 +470,11 @@
           console.log('toggle');
           this.displaySettings = !this.displaySettings;
           render(true);
+        },
+
+        onToggleFullscreen: () => {
+          if(this.isFullscreen) this.closeFullScreen();
+          else this.openFullscreen();
         }
 
       };
