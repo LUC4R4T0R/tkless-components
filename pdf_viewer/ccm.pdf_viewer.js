@@ -164,6 +164,12 @@
           }
         } );
 
+        let resizeTimeout;
+        window.addEventListener('resize', () => { //re-render page on resize
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => renderPage(), 100); //prevent many re-renderings during resize
+        });
+
         // Add touch control.
         $.touchControl( this.element, { onLeft: this.events.onPrev, onRight: this.events.onNext } );
 
